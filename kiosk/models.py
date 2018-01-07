@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 
-"""class Product(models.Model):
+class Product(models.Model):
     # author = models.ForeignKey('auth.User')
     name = models.CharField(max_length=200)
     cost = models.IntegerField(default=0)
@@ -14,4 +14,3 @@ from django.utils import timezone
 
     def __str__(self):
         return self.name
-"""
