@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
+# from django.utils import timezone
 
 
 class Provider(models.Model):
@@ -24,6 +24,19 @@ class Offer(models.Model):
     cost = models.FloatField(default=0)
     is_actual = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.consumables
+
+
+class Ingredient(models.Model):
+    consumables = models.ForeignKey(Consumables, on_delete=models.CASCADE)
+    quantity = models.FloatField(default=0)
+
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.consumables
+
 
 class Product(models.Model):  # products that has a button in tha application
     name = models.CharField(max_length=200)
@@ -33,17 +46,12 @@ class Product(models.Model):  # products that has a button in tha application
         return self.name
 
     def get_cost_price(self):
-        return self.name
-
-
-class Ingredient(models.Model):
-    consumables = models.ForeignKey(Consumables, on_delete=models.CASCADE)
-    quantity = models.FloatField(default=0)
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.consumables)
+        sum_price = 0
+        for ingredient in self.ingredient_set.all():
+            consumables_price = Offer.objects.get(consumables__ingredient=ingredient, is_actual=True).cost
+            ingredient_price = ingredient.quantity * consumables_price / ingredient.consumables.size
+            sum_price += ingredient_price
+        return sum_price
 
 
 class FiscalCheck(models.Model):
@@ -51,7 +59,7 @@ class FiscalCheck(models.Model):
     check_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.seller) + " " + str(self.check_time)
+        return "%s %s" % (self.seller, self.check_time)
 
 
 class Sale(models.Model):
@@ -61,5 +69,4 @@ class Sale(models.Model):
     fiscal_check = models.ForeignKey(FiscalCheck, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.product) + " " + str(self.count)
-
+        return "%s %s" % (self.product, self.count)
