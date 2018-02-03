@@ -1,0 +1,53 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KIOSK</title>
+
+    <script src="{% static "kiosk/js/products.js" %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../../../static/kiosk/css/products.css">
+</head>
+<body>
+
+<h1>Products</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+{% if products_list %}
+    {% for product in products_list %}
+        <button onclick="reply_click({{ product.id }})">
+            {{ product }}
+        </button>
+    {% endfor %}
+{% else %}
+    <p>No products for sale.</p>
+{% endif %}
+
+<ul id="list">
+    {% for product in products_list %}
+
+        <li id="{{ product.id }}" style="display: none">
+            {{ product }} <i class="product_number" style="display: none">0</i>
+        </li>
+
+    {% endfor %}
+</ul>
+
+<form action="/kiosk/" method="post">
+    {% csrf_token %}
+    {% for sale_form in sale_form_set %}
+        {{ sale_form }}
+        <input type="submit" value="Sale"/>
+    {% endfor %}
+</form>
+
+
+</body>
+</html>
