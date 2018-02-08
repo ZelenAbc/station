@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 class Product(models.Model):  # products that has a button in tha application
     name = models.CharField(max_length=200)
     cost = models.IntegerField(default=0)
+    icon = models.ImageField(upload_to="static/img/", verbose_name="Product's icon")
 
     def __str__(self):
         return self.name
@@ -16,6 +17,7 @@ class Product(models.Model):  # products that has a button in tha application
 class Consumables(models.Model):
     name = models.CharField(max_length=200)
     quantity = models.FloatField(default=0)
+    quantity_of_pack = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
@@ -28,7 +30,7 @@ class Ingredient(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.consumables
+        return str(self.consumables)
 
     def get_available_number(self):
         consumables_quantity = self.consumables.quantity
@@ -45,3 +47,12 @@ class Sale(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.product, self.quantity)
+
+    def save(self, *args, **kwargs):
+        print(self.product.ingredient_set.all())
+        for ingredient in self.product.ingredient_set.all():
+            consumables = ingredient.consumables
+            consumables.quantity -= ingredient.quantity
+            consumables.save()
+
+        super().save(*args, **kwargs)

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load index %}
 
 <!doctype html>
 <html lang="en">
@@ -9,45 +10,73 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>KIOSK</title>
 
-    <script src="{% static "kiosk/js/products.js" %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "kiosk/js/products.js" %}"></script>
 
-    <link rel="stylesheet" type="text/css" href="../../../static/kiosk/css/products.css">
+    <link rel="stylesheet" type="text/css" href="{% static "/kiosk/css/products.css" %}">
 </head>
 <body>
 
-<h1>Products</h1>
+<h1>CoffeeWheels</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-{% if products_list %}
-    {% for product in products_list %}
-        <button onclick="reply_click({{ product.id }})">
-            {{ product }}
-        </button>
-    {% endfor %}
-{% else %}
-    <p>No products for sale.</p>
-{% endif %}
+<div class="container">
+    <div class="product_list">
+        {% if products_list %}
+            <td>
+                {% for product in products_list %}
+                    <tr>
+                        <div class="product_button add_product" id="{{ product.id }}">
+                            <img src="../{{ product.icon }}" width="90" height="90">
+                            <div class="bottom_text"><p>{{ product.name }}</p></div>
+                        </div>
+                    </tr>
+                {% endfor %}
+            </td>
+        {% else %}
+            <p>No products for sale.</p>
+        {% endif %}
+    </div>
+</div>
 
-<ul id="list">
-    {% for product in products_list %}
 
-        <li id="{{ product.id }}" style="display: none">
-            {{ product }} <i class="product_number" style="display: none">0</i>
-        </li>
 
-    {% endfor %}
-</ul>
+        {% for form in sale_form_set %}
+            {% with i=form.product.value %}
+                {% with x=products_list|get_by_id:i %}
+                        <span>{{ x.name }}</span>
+                        <em id="{{ i }}">0</em>
+                        {{ form }}
+                    <br/>
+                {% endwith %}
+            {% endwith %}
+        {% endfor %}
+
 
 <form action="/kiosk/" method="post">
     {% csrf_token %}
-    {% for sale_form in sale_form_set %}
-        {{ sale_form }}
-        <input type="submit" value="Sale"/>
-    {% endfor %}
+    {{ sale_form_set.management_form }}
+<div class="container">
+    <div class="product_list">
+        {% if products_list %}
+            <td>
+                {% for product in products_list %}
+                    <tr>
+                        <div class="product_button add_product" id="{{ product.id }}">
+                            <img src="../{{ product.icon }}" width="90" height="90">
+                            <div class="bottom_text"><p>{{ product.name }}</p></div>
+                        </div>
+                    </tr>
+                {% endfor %}
+            </td>
+        {% else %}
+            <p>No products for sale.</p>
+        {% endif %}
+    </div>
+</div>
+    <input type="submit" value="Sale"/>
 </form>
-
 
 </body>
 </html>
