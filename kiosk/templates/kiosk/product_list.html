@@ -41,40 +41,20 @@
 </div>
 
 
-
-        {% for form in sale_form_set %}
-            {% with i=form.product.value %}
-                {% with x=products_list|get_by_id:i %}
-                        <span>{{ x.name }}</span>
-                        <em id="{{ i }}">0</em>
-                        {{ form }}
-                    <br/>
-                {% endwith %}
-            {% endwith %}
-        {% endfor %}
-
-
 <form action="/kiosk/" method="post">
     {% csrf_token %}
     {{ sale_form_set.management_form }}
-<div class="container">
-    <div class="product_list">
-        {% if products_list %}
-            <td>
-                {% for product in products_list %}
-                    <tr>
-                        <div class="product_button add_product" id="{{ product.id }}">
-                            <img src="../{{ product.icon }}" width="90" height="90">
-                            <div class="bottom_text"><p>{{ product.name }}</p></div>
-                        </div>
-                    </tr>
-                {% endfor %}
-            </td>
-        {% else %}
-            <p>No products for sale.</p>
-        {% endif %}
-    </div>
-</div>
+    {% for form in sale_form_set %}
+        {% with i=form.product.value %}
+            {% with x=products_list|get_by_id:i %}
+                <div id="{{ i }}" style="visibility: hidden" class="check">
+                    <span>{{ x.name }}</span>
+                    <span class="product_count">0</span>
+                    {{ form }}
+                </div>
+            {% endwith %}
+        {% endwith %}
+    {% endfor %}
     <input type="submit" value="Sale"/>
 </form>
 

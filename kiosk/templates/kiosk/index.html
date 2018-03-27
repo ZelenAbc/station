@@ -1,0 +1,25 @@
+{% load staticfiles %}
+{% load index %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CoffeeWheels</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "kiosk/js/present.js" %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "/kiosk/css/products.css" %}">
+</head>
+<body>
+
+{% for check in check_list %}
+    {{ check }}
+{% endfor %}
+
+</body>
+</html>
